@@ -2,5 +2,6 @@
 
 void say_hello(void)
 {
-    printf("Hello world!\n");
+    printf("Hello world zzz!\n");
 }
+//qwq
