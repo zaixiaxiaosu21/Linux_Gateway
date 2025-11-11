@@ -5,6 +5,7 @@ CFLAGS := -g -O0 -Wall
 
 log:= thirdparty/log.c thirdparty/log.h
 json:=thirdparty/cJSON.c thirdparty/cJSON.h
+common:= app/app_common.c app/app_common.h
 logtest:test/logtest.c $(log)
 		-gcc $(CFLAGS) $^ -o $@ -I thirdparty
 #		-./$@
@@ -13,4 +14,7 @@ json_test:test/json_test.c $(log) $(json)
 		-gcc $^ -o $@ -I thirdparty
 		-./$@
 		-rm $@
-   
+app_common_test:test/app_common_test.c $(common) $(log) 
+		-gcc $^ -o $@ -I app -I thirdparty
+		-./$@
+		-rm $@
