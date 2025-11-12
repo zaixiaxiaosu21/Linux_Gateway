@@ -20,6 +20,11 @@ app_common_test:test/app_common_test.c $(common) $(log)
 		-./$@
 		-rm $@
 app_message_test:test/app_message_test.c $(log) $(json) $(message)
-		-gcc  $^ -o $@ -I app -I thirdparty
-		-./$@
-		-rm $@
+		-gcc $(CFLAGS) $^ -o $@ -I app -I thirdparty
+#		-./$@
+#		-rm $@
+app_mqtt := app/app_mqtt.h app/app_mqtt.c
+app_mqtt_test: test/app_mqtt_test.c $(app_mqtt) $(log)
+	-gcc $^ -o $@ -Ithirdparty -Iapp -lpaho-mqtt3c
+	-./$@
+	-rm $@
