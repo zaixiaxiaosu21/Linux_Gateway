@@ -1,25 +1,13 @@
 #include "app_mqtt.h"
-
-int handle_callback(char *json)
-{
-    log_debug("处理接收数据：%s", json);
+int callback(char *json){
+    printf("rec_callback:%s\n",json);
     return 0;
 }
-
 int main(int argc, char const *argv[])
 {
-    // 初始化
-    app_mqtt_init();
-    // 注册接收的回调函数
-    app_mqtt_registerRecvCallback(handle_callback);
-    // 发送数据
-    app_mqtt_send("{\"name\":\"tom\", \"age\":18}");
-
-    // 休眠100秒，让当前运行的程序不立即结束 =》 为了能接受消息
-sleep(100);
-
-    // 关闭
-app_mqtt_close();
-
-    return 0;
+  app_mqtt_init();
+  app_mqtt_registerRecvCallback(callback);
+  app_mqtt_send("{\"device_id\":1,\"cur_angle\":3600,\"motor_status\":\"on\"}");
+  sleep(100);
+  app_mqtt_close();
 }

@@ -1,94 +1,78 @@
 #include "app_mqtt.h"
 
-static MQTTClient client;                                                           // mqtt客户端句柄
-static MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer; // mqtt连接参数
+static MQTTClient client;
+static MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
 static MQTTClient_message pubmsg = MQTTClient_message_initializer;
-static int (*mqtt_recv_callback)(char *json) = NULL;
-
-static void delivered(void *context, MQTTClient_deliveryToken dt)
+static int (*rec_callback)(char *json)=NULL;
+// 发送消息完成的回调
+void delivered(void *context, MQTTClient_deliveryToken dt)
 {
-    log_debug("消息发送完成");
+   log_info("发送消息成功");
 }
 
-static int msgarrvd(void *context, char *topicName, int topicLen, MQTTClient_message *message)
-{
-    int result = 0; // 0: 失败，1：成功
-    if (mqtt_recv_callback != NULL)
+// 收到消息的回调
+int msgarrvd(void *context, char *topicName, int topicLen, MQTTClient_message *message)
+{   
+    int res=0;//1表示消息处理成功，0表示消息处理失败
+    if (rec_callback)
     {
-        result = mqtt_recv_callback(message->payload) == 0 ? 1 : 0;
-}
-
-    // 释放内存
+        res=rec_callback((char *)message->payload)==0?1:0;
+    }
+    
     MQTTClient_freeMessage(&message);
-MQTTClient_free(topicName);
-
-    return result;
+    MQTTClient_free(topicName);
+    return 1;//1表示消息处理成功，0表示消息处理失败
 }
 
-static void connlost(void *context, char *cause)
+// 连接意外断开的回调
+void connlost(void *context, char *cause)
 {
-    log_debug("Connection lost");
-    log_debug("cause: %s", cause);
+    log_info("连接意外断开,原因：%s", cause);
 }
-
-int app_mqtt_init(void)
-{
-    // 清空mqtt的消息队列
-    //  创建mqtt客户端
-    if (MQTTClient_create(&client, ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL) != MQTTCLIENT_SUCCESS)
-    {
-        log_debug("MQTT客户端创建失败");
+int app_mqtt_init()
+{   
+    //创建客户端
+    if (MQTTClient_create(&client, ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL) != MQTTCLIENT_SUCCESS){
+        log_error("MQTTClient_create error");
         return -1;
-}
-
-    // 回调函数注册
-    if (MQTTClient_setCallbacks(client, NULL, connlost, msgarrvd, delivered) != MQTTCLIENT_SUCCESS)
-    {
-        log_debug("MQTT回调函数注册失败");
-        MQTTClient_destroy(&client);
-}
-
-    // 连接mqtt服务器
-    if (MQTTClient_connect(client, &conn_opts) != MQTTCLIENT_SUCCESS)
-    {
-        log_debug("MQTT连接失败");
+    }
+    //设置回调函数
+    if (MQTTClient_setCallbacks(client, NULL, connlost, msgarrvd, delivered) != MQTTCLIENT_SUCCESS){
+       log_error("MQTTClient_setCallbacks error");
+       MQTTClient_destroy(&client);
+       return -1;
+    }
+    //建立连接
+    if (MQTTClient_connect(client, &conn_opts) != MQTTCLIENT_SUCCESS){
+        log_error("MQTTClient_connect error");
         MQTTClient_destroy(&client);
         return -1;
     }
-    // 订阅主题
-    if (MQTTClient_subscribe(client, TOPIC_PULL, QOS) != MQTTCLIENT_SUCCESS)
-    {
-        log_debug("MQTT订阅主题失败");
-        MQTTClient_disconnect(client, TIMEOUT);
+    //订阅
+    if (MQTTClient_subscribe(client, TOPIC_PULL, QOS) != MQTTCLIENT_SUCCESS){
+        log_error("MQTTClient_subscribe error");
+        MQTTClient_disconnect(client,TIMEOUT);
         MQTTClient_destroy(&client);
         return -1;
+    }
 }
 
-    log_debug("MQTT初始化成功");
-    return 0;
-}
-
-void app_mqtt_close(void)
-{
+void app_mqtt_close()
+{   
     MQTTClient_unsubscribe(client, TOPIC_PULL);
     MQTTClient_disconnect(client, TIMEOUT);
     MQTTClient_destroy(&client);
 }
 
 int app_mqtt_send(char *json)
-{
-    pubmsg.payload = json;
-    pubmsg.payloadlen = (int)strlen(json);
+{   pubmsg.payload = json;
+    pubmsg.payloadlen = strlen(json);
     pubmsg.qos = QOS;
-    if (MQTTClient_publishMessage(client, TOPIC_PUSH, &pubmsg, NULL) != MQTTCLIENT_SUCCESS)
-    {
-        log_debug("MQTT发布消息失败");
-        return -1;
-    }
+    MQTTClient_publishMessage(client, TOPIC_PUSH, &pubmsg, NULL);
     return 0;
 }
 
 void app_mqtt_registerRecvCallback(int callback(char *json))
-{
-    mqtt_recv_callback = callback;
+{   
+    rec_callback = callback;
 }
