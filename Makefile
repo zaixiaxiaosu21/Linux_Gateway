@@ -7,6 +7,7 @@ log:= thirdparty/log.c thirdparty/log.h
 json:=thirdparty/cJSON.c thirdparty/cJSON.h
 common:= app/app_common.c app/app_common.h
 message:= app/app_message.c app/app_message.h
+pool:= app/app_pool.c app/app_pool.h
 logtest:test/logtest.c $(log)
 		-gcc $(CFLAGS) $^ -o $@ -I thirdparty
 #		-./$@
@@ -26,5 +27,9 @@ app_message_test:test/app_message_test.c $(log) $(json) $(message)
 app_mqtt := app/app_mqtt.h app/app_mqtt.c
 app_mqtt_test: test/app_mqtt_test.c $(app_mqtt) $(log)
 	-gcc $^ -o $@ -Ithirdparty -Iapp -lpaho-mqtt3c
+	-./$@
+	-rm $@
+app_pool_test: test/app_pool_test.c $(log) $(pool)	
+	-gcc $^ -o $@ -I app -I thirdparty
 	-./$@
 	-rm $@
