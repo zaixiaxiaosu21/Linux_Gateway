@@ -9,6 +9,7 @@ common:= app/app_common.c app/app_common.h
 message:= app/app_message.c app/app_message.h
 pool:= app/app_pool.c app/app_pool.h
 buffer:= app/app_buffer.c app/app_buffer.h
+app_modbus := app/app_modbus.h app/app_modbus.c
 logtest:test/logtest.c $(log)
 		-gcc $(CFLAGS) $^ -o $@ -I thirdparty
 #		-./$@
@@ -37,4 +38,8 @@ app_pool_test: test/app_pool_test.c $(log) $(pool)
 app_buffer_test: test/app_buffer_test.c $(log) $(buffer)
 	-gcc $^ -o $@ -I app -I thirdparty
 	-./$@
+	-rm $@
+app_modbus_test: test/app_modbus_test.c $(app_modbus) $(log)
+	-$(CC) $(CFLAGS) $^ -o $@ -Ithirdparty -Iapp -lmodbus
+	./$@
 	-rm $@
