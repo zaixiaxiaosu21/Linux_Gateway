@@ -11,6 +11,8 @@ pool:= app/app_pool.c app/app_pool.h
 buffer:= app/app_buffer.c app/app_buffer.h
 app_modbus := app/app_modbus.h app/app_modbus.c
 app_device := app/app_device.h app/app_device.c
+ota_http:= ota/ota_http.c ota/ota_http.h
+ota_version:= ota/ota_version.c ota/ota_version.h
 logtest:test/logtest.c $(log)
 		-gcc $(CFLAGS) $^ -o $@ -I thirdparty
 #		-./$@
@@ -48,5 +50,14 @@ device_objs:=$(app_device) $(log) $(json) $(buffer)\
 	$(app_modbus) $(pool) $(app_mqtt) $(message) 
 app_device_test: test/app_device_test.c $(device_objs)
 	-$(CC) $(CFLAGS) $^ -o $@ -Ithirdparty -Iapp -lmodbus -lpaho-mqtt3c
+	-./$@
+	-rm $@
+ota_http_test: test/ota_http_test.c $(ota_http) $(log)
+	-$(CC) $^ -o $@ -Iapp -Iota -I thirdparty -lcurl
+	-./$@
+	-rm $@
+
+ota_version_test: test/ota_version_test.c $(ota_version) $(json) $(ota_http) $(log)
+	-$(CC) $^ -o $@ -Iapp -Iota -I thirdparty -lcurl -lcrypto
 	-./$@
 	-rm $@
