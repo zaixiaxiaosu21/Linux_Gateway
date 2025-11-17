@@ -39,7 +39,7 @@ int app_pool_init(int thread_num)
     pthread_create(&thread_pool[i],NULL,thread_fun,NULL);
    }
    
-   
+   return 0;
 }
 
 void app_pool_destroy()
@@ -62,4 +62,5 @@ int app_pool_registerTask(int (*task_fun)(void *arg), void *arg)
         .arg=arg,
      };
      mq_send(mq_id,(char *)&task_info,sizeof(task_info),0);
+     return 0;
 }

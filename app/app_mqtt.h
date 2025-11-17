@@ -6,7 +6,7 @@
 #include "log.h"
 #include "string.h"
 
-#define ADDRESS "tcp://192.168.42.192:1883"
+#define ADDRESS "tcp://192.168.60.1:1883"
 #define CLIENTID "b253ba38-daf6-4b37-984f-5d8fdc6a1cfb"
 #define TOPIC_PULL "console_to_gateway" // 订阅的主题
 #define TOPIC_PUSH "gateway_to_console" // 发送消息的主题

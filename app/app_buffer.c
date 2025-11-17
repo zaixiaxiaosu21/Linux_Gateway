@@ -5,7 +5,7 @@
 static SUB_BUFFER* sub_buffer_init(int size){
       SUB_BUFFER *buf = (SUB_BUFFER *)malloc(sizeof(SUB_BUFFER));
       buf->size = size;
-      buf->ptr = (char *)malloc(size);
+      buf->ptr = (unsigned char *)malloc(size);
       buf->len=0;
       return  buf;
 }
@@ -89,7 +89,7 @@ int App_Buffer_Read(BUFFER *buf, char *data_buff, int buffer_size)
         return -1;
     }
     memcpy(data_buff,subbuff->ptr+1,len);
-    memmove(subbuff->ptr,subbuff->ptr+len+1,subbuff->size-len-1);
+    memmove(subbuff->ptr,subbuff->ptr+len+1,subbuff->len-len-1);
     subbuff->len-=len+1;
     pthread_mutex_unlock(&buf->read);
     return len;

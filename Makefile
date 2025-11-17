@@ -10,6 +10,7 @@ message:= app/app_message.c app/app_message.h
 pool:= app/app_pool.c app/app_pool.h
 buffer:= app/app_buffer.c app/app_buffer.h
 app_modbus := app/app_modbus.h app/app_modbus.c
+app_device := app/app_device.h app/app_device.c
 logtest:test/logtest.c $(log)
 		-gcc $(CFLAGS) $^ -o $@ -I thirdparty
 #		-./$@
@@ -41,5 +42,11 @@ app_buffer_test: test/app_buffer_test.c $(log) $(buffer)
 	-rm $@
 app_modbus_test: test/app_modbus_test.c $(app_modbus) $(log)
 	-$(CC) $(CFLAGS) $^ -o $@ -Ithirdparty -Iapp -lmodbus
-	./$@
+	./$@1
+	-rm $@
+device_objs:=$(app_device) $(log) $(json) $(buffer)\
+	$(app_modbus) $(pool) $(app_mqtt) $(message) 
+app_device_test: test/app_device_test.c $(device_objs)
+	-$(CC) $(CFLAGS) $^ -o $@ -Ithirdparty -Iapp -lmodbus -lpaho-mqtt3c
+	-./$@
 	-rm $@

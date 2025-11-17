@@ -21,7 +21,7 @@ int msgarrvd(void *context, char *topicName, int topicLen, MQTTClient_message *m
     
     MQTTClient_freeMessage(&message);
     MQTTClient_free(topicName);
-    return 1;//1表示消息处理成功，0表示消息处理失败
+    return res;//1表示消息处理成功，0表示消息处理失败
 }
 
 // 连接意外断开的回调
@@ -55,6 +55,7 @@ int app_mqtt_init()
         MQTTClient_destroy(&client);
         return -1;
     }
+    return 0;
 }
 
 void app_mqtt_close()
