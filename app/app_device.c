@@ -77,7 +77,7 @@ static int receive_msg_callback(char *json)
     
     // 将数据写入正确的缓冲区
     App_Buffer_Write(down_buffer,(char *)bytes_buff,len);
-    log_info("数据已写入down_buffer，长度: %d", len);
+    log_info("数据已写入down_buffer,长度: %d", len);
     app_pool_registerTask(write_task_func,NULL);
     return 0;
 }
@@ -168,7 +168,7 @@ static void *read_thread_func(void *arg)
 void app_device_start(void)
 {
     
-    app_mqtt_registerRecvCallback(receive_msg_callback);
+    app_mqtt_registerCallback(receive_msg_callback);
     
     pthread_create(&read_thread, NULL, read_thread_func, NULL);
    

@@ -26,10 +26,10 @@ int daemon_sub_process_checkstart(SubProcess *sp)
    //如果子进程未启动
    sp->pid=fork();
    if(sp->pid==0){
-       char *path = "gateway_test";
-     char *argv[] = {path, sp->cmd_parm, NULL};
+       char *path = EXCEL_PATH;
+     char *argv[] = {EXCEL_PATH, sp->cmd_parm, NULL};
      log_debug("子进程%d正在运行,启动命令:%s",getpid(),sp->cmd_parm);
-     execve(path, argv, NULL);
+     execve(EXCEL_PATH, argv, NULL);
      exit(EXIT_FAILURE);
    }
    return 0;

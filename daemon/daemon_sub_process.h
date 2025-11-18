@@ -12,6 +12,7 @@
 #include "log.h"
 
 #define MAX_FAIL_COUNT 5
+#define EXCEL_PATH  "/bin/gateway"
 typedef struct{
     pid_t pid;//子进程id
     char *cmd_parm;//启动子进程命令参数 ota|app

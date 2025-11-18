@@ -74,3 +74,27 @@ gateway_test: test/gateway_test.c $(OBJS)
 	-$(CC)  $^ -o $@ $(IPATHS) $(LLIBS)
 	./$@ daemon
 	-rm $@
+
+#--------------------------------------------#
+
+app_name:=gateway
+
+CROSS_COMPILE:=/home/stefanie/桌面/toolchain/bin/arm-linux-gnueabihf-gcc 
+
+SYSROOT:= --sysroot=/home/stefanie/桌面/sysroot
+
+app_peer := root@192.168.42.66
+
+cross_compile: main.c $(OBJS)
+	-$(CROSS_COMPILE) -o $(app_name) $^ $(IPATHS)  $(LLIBS) $(SYSROOT)
+	-scp $(app_name)   $(app_peer):/usr/bin/$(app_name)
+	-rm -f $(app_name)
+
+init_shell:
+	scp ./init/S99gateway  $(app_peer):/etc/init.d/S99gateway
+
+clean:
+	rm -f $(app_name)
+
+#--------------------------------------------#
+

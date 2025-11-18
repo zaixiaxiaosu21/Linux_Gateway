@@ -17,7 +17,7 @@ char *ota_http_getJson(char *url)
     //2.设置回调
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, receive_callback);
     //3.传入回调函数参数
-    char *json_buf = malloc(100);
+    char *json_buf = malloc(1024);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, json_buf);
 
     //发送url请求

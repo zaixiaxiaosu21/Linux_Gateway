@@ -1,0 +1,47 @@
+#!/bin/sh
+EXE_PATH="/usr/bin/gateway"
+OTA_PATH="/root/gateway.update"
+BAK_PATH="/root/gateway.bak"
+PID_PATH="/root/gateway.pid"
+start() {
+    #1 检查替换 ，如果下载了新的程序 ，则先做替换
+    if [ -f $OTA_PATH ]
+    then
+        #1 把当前程序移动重命名为BAK
+        mv -f $EXE_PATH $BAK_PATH
+        #2 把update程序移动命名为EXE 
+        mv -f $OTA_PATH $EXE_PATH
+        #3 给新程序赋权限 chmod +x 
+        chmod +x $EXE_PATH
+    fi
+    #2 启动程序
+    start-stop-daemon -S -q -p $PID_PATH \
+        --exec $EXE_PATH -- daemon
+    [ $? = 0 ] && echo "OK" || echo "FAIL"
+}
+stop() {
+    printf "Stopping dropbear sshd: "
+    start-stop-daemon -K -q -p $PID_PATH
+    [ $? = 0 ] && echo "OK" || echo "FAIL"
+}
+restart() {
+    stop
+    start
+}
+
+case "$1" in
+    start)
+        start
+    ;;
+    stop)
+        stop
+    ;;
+    restart|reload)
+        restart
+    ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+    esac
+
+exit $?
