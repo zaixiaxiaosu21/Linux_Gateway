@@ -5,7 +5,7 @@
 #include "app_device.h"
 #include <signal.h>
 #define DEVICE_FILE "/dev/ttyS1"
-
+//#define DEVICE_FILE "/dev/pts/5"
 /**
  * @brief 运行整个app模块
  * 

@@ -4,7 +4,7 @@ int main(int argc, char const *argv[])
 {
 
     // 初始化设备
-    app_device_init("/dev/pts/1");
+    app_device_init("/dev/pts/5");
 
     // 启动设备
     app_device_start();

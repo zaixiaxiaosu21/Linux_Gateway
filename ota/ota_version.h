@@ -2,7 +2,7 @@
 #define __OTA_VERSION_H__
 
 #define VERSION_MAJOR 3  // 主版本号
-#define VERSION_MINOR 0 // 次版本号
+#define VERSION_MINOR 3 // 次版本号
 #define VERSION_PATCH 0 // 修订版本号
 
 /**

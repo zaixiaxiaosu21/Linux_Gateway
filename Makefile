@@ -13,6 +13,9 @@ app_modbus := app/app_modbus.h app/app_modbus.c
 app_device := app/app_device.h app/app_device.c
 ota_http:= ota/ota_http.c ota/ota_http.h
 ota_version:= ota/ota_version.c ota/ota_version.h
+app_runner:= app/app_runner.c app/app_runner.h
+daemon_sub_process:= daemon/daemon_sub_process.c daemon/daemon_sub_process.h
+daemon_runner:= daemon/daemon_runner.c daemon/daemon_runner.h
 logtest:test/logtest.c $(log)
 		-gcc $(CFLAGS) $^ -o $@ -I thirdparty
 #		-./$@
@@ -60,4 +63,14 @@ ota_http_test: test/ota_http_test.c $(ota_http) $(log)
 ota_version_test: test/ota_version_test.c $(ota_version) $(json) $(ota_http) $(log)
 	-$(CC) $^ -o $@ -Iapp -Iota -I thirdparty -lcurl -lcrypto
 	-./$@
+	-rm $@
+IPATHS := -Ithirdparty -Iapp -Iota -Idaemon
+LLIBS := -lpaho-mqtt3c -lmodbus -lcurl -lcrypto
+OBJS := $(common) $(log) $(json) $(message) $(app_mqtt) $(buffer) \
+		$(pool) $(app_modbus) $(app_device) $(app_runner) \
+		$(ota_http) $(ota_version) $(daemon_sub_process) $(daemon_runner) 
+
+gateway_test: test/gateway_test.c $(OBJS)
+	-$(CC)  $^ -o $@ $(IPATHS) $(LLIBS)
+	./$@ daemon
 	-rm $@

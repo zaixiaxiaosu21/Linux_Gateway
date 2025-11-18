@@ -3,7 +3,7 @@ static int isrun=1;
 void exit_handler(int signum){
         isrun=0;
 }
-int main(int argc, char const *argv[])
+void app_runner_run(void)
 {
      signal(SIGINT, exit_handler);
      signal(SIGTERM, exit_handler);
@@ -16,5 +16,5 @@ int main(int argc, char const *argv[])
         sleep(1);
     }
     app_device_free();
-    return 0;
+    
 }

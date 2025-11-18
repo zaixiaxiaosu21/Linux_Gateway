@@ -4,7 +4,7 @@
 int main(int argc, char const *argv[])
 {
      // 初始化modbus模块
-    app_modbus_init("/dev/pts/1");
+    app_modbus_init("/dev/pts/5");
 
     // 写线圈  '\x01\x0F\x00\x02\x00\x01\x35\xCB'
     uint8_t coil_data = 1;
